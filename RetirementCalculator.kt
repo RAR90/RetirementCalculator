@@ -47,10 +47,13 @@ class RetirementCalculator(
 
     init {
 
-        periodsList?.forEachIndexed { _, periodRetire ->
+        val mutablePeriodRetires = periodsList as MutableList<PeriodRetire>
+        val ordenedList = mutablePeriodRetires.sortedWith(CompareObjects)
+
+        ordenedList?.forEachIndexed { _, periodRetire ->
             if (periodRetire.tipo == "Sim") {
                 periodosEspeciais.add(arrayOf(periodRetire.inicio, periodRetire.fim))
-            }else {
+            } else {
                 periodos.add(arrayOf(periodRetire.inicio, periodRetire.fim))
             }
         }
@@ -166,7 +169,7 @@ class RetirementCalculator(
      */
     private fun toDays(date: String): Int {
         val arr = date.split("/")
-        return Integer.parseInt(arr[0]) + (Integer.parseInt(arr[1]) *30) + ((Integer.parseInt(arr[2]) *12)*30)
+        return Integer.parseInt(arr[0]) + (Integer.parseInt(arr[1]) * INT_MONTH) + ((Integer.parseInt(arr[2]) * 12) * INT_MONTH)
     }
 
     /**
@@ -175,9 +178,9 @@ class RetirementCalculator(
      * @return data no formato 00/00/0000
      */
     private fun toBrDate(days: Int) : String {
-        val anos: Int = days / 364
-        val meses: Int = days % 364 / 30
-        val dias: Int = ( days % 364 ) % 30
+        val anos: Int = days / INT_YEAR
+        val meses: Int = days % INT_YEAR / INT_MONTH
+        val dias: Int = ( days % INT_YEAR ) % INT_MONTH
         return anos.toString() + " anos, " + meses.toString() + " meses, " + dias.toString() + " dias."
     }
 
@@ -187,7 +190,7 @@ class RetirementCalculator(
      * @return array respectivamente com os valores dia, mes, ano
      */
     private fun toArrDate(days: Int) : IntArray {
-        return intArrayOf(( days % 364 ) % 30, days % 364 / 30, days / 364)
+        return intArrayOf(( days % INT_YEAR ) % INT_MONTH, days % INT_YEAR / INT_MONTH, days / INT_YEAR)
     }
 
     /**
@@ -298,9 +301,11 @@ class RetirementCalculator(
 
     companion object {
         private const val GENDER_MALE = "Masculino"
-        private const val INT_35_YEARS = 12775
-        private const val INT_30_YEARS = 10950
+        private const val INT_35_YEARS = 12600
+        private const val INT_30_YEARS = 10800
         private const val INT_60_YEARS = 60
         private const val INT_65_YEARS = 65
+        private const val INT_YEAR = 360
+        private const val INT_MONTH = 30
     }
 }
